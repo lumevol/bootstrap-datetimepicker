@@ -1,4 +1,4 @@
-/*! version : 4.17.47
+/*! version : 4.18.0
  =========================================================
  bootstrap-datetimejs
  https://github.com/Eonasdan/bootstrap-datetimepicker
@@ -365,7 +365,7 @@
                     content.append(toolbar);
                 }
                 if (hasDate()) {
-                    content.append($('<li>').addClass((options.collapse && hasTime() ? 'collapse in' : '')).append(dateView));
+                    content.append($('<li>').addClass((options.collapse && hasTime() ? 'collapse show' : '')).append(dateView));
                 }
                 if (options.toolbarPlacement === 'default') {
                     content.append(toolbar);
@@ -944,6 +944,11 @@
                     type: 'dp.hide',
                     date: date.clone()
                 });
+                
+                // do not allow an invalid date to be entered
+                if (!isValid(date, 'd')) {
+                    clear();
+                }
 
                 input.blur();
 
@@ -1101,7 +1106,7 @@
                     var $this = $(e.target),
                         $parent = $this.closest('ul'),
                         expanded = $parent.find('.in'),
-                        closed = $parent.find('.collapse:not(.in)'),
+                        closed = $parent.find('.collapse:not(.show)'),
                         collapseData;
 
                     if (expanded && expanded.length) {
@@ -2200,6 +2205,10 @@
             return picker;
         };
 
+        picker.isValid = function (targetMoment, granularity) {
+            return isValid(targetMoment, granularity);
+        };
+
         picker.disabledTimeIntervals = function (disabledTimeIntervals) {
             ///<signature helpKeyword="$.fn.datetimepicker.disabledTimeIntervals">
             ///<summary>Returns an array with the currently set disabled dates on the component.</summary>
@@ -2524,9 +2533,13 @@
                 }
                 var d = this.date() || this.getMoment();
                 if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().subtract(7, 'd'));
+                    var setdate = d.clone().subtract(7, 'd');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 } else {
-                    this.date(d.clone().add(this.stepping(), 'm'));
+                    var setdate = d.clone().add(this.stepping(), 'm');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 }
             },
             down: function (widget) {
@@ -2536,9 +2549,13 @@
                 }
                 var d = this.date() || this.getMoment();
                 if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().add(7, 'd'));
+                    var setdate = d.clone().add(7, 'd');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 } else {
-                    this.date(d.clone().subtract(this.stepping(), 'm'));
+                    var setdate = d.clone().subtract(this.stepping(), 'm');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 }
             },
             'control up': function (widget) {
@@ -2547,9 +2564,13 @@
                 }
                 var d = this.date() || this.getMoment();
                 if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().subtract(1, 'y'));
+                    var setdate = d.clone().subtract(1, 'y');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 } else {
-                    this.date(d.clone().add(1, 'h'));
+                    var setdate = d.clone().add(1, 'h');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 }
             },
             'control down': function (widget) {
@@ -2558,9 +2579,13 @@
                 }
                 var d = this.date() || this.getMoment();
                 if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().add(1, 'y'));
+                    var setdate = d.clone().add(1, 'y');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 } else {
-                    this.date(d.clone().subtract(1, 'h'));
+                    var setdate = d.clone().subtract(1, 'h');
+                    if (this.isValid(setdate, 'd'))
+                        this.date(setdate);
                 }
             },
             left: function (widget) {
@@ -2568,8 +2593,9 @@
                     return;
                 }
                 var d = this.date() || this.getMoment();
-                if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().subtract(1, 'd'));
+                var setdate = d.clone().subtract(1, 'd');
+                if (widget.find('.datepicker').is(':visible') && this.isValid(setdate, 'd')) {
+                    this.date(setdate);
                 }
             },
             right: function (widget) {
@@ -2577,8 +2603,9 @@
                     return;
                 }
                 var d = this.date() || this.getMoment();
-                if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().add(1, 'd'));
+                var setdate = d.clone().add(1, 'd');
+                if (widget.find('.datepicker').is(':visible') && this.isValid(setdate, 'd')) {
+                    this.date(setdate);
                 }
             },
             pageUp: function (widget) {
@@ -2586,8 +2613,9 @@
                     return;
                 }
                 var d = this.date() || this.getMoment();
-                if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().subtract(1, 'M'));
+                var setdate = d.clone().subtract(1, 'M');
+                if (widget.find('.datepicker').is(':visible') && this.isValid(setdate, 'd')) {
+                    this.date(setdate);
                 }
             },
             pageDown: function (widget) {
@@ -2595,8 +2623,9 @@
                     return;
                 }
                 var d = this.date() || this.getMoment();
-                if (widget.find('.datepicker').is(':visible')) {
-                    this.date(d.clone().add(1, 'M'));
+                var setdate = d.clone().add(1, 'M');
+                if (widget.find('.datepicker').is(':visible') && this.isValid(setdate, 'd')) {
+                    this.date(setdate);
                 }
             },
             enter: function () {
